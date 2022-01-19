@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Game-of-Life</title>
+    </head>
+    <body>
+        <form th:action="@{/upload}" method="post">
+            <input type="file" id="file" accept="application/json"/><br/><br/>
+            <input type="submit"/>
+        </form>
+    </body>
+</html>
