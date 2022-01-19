@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-public class Generation {
+public class GenerationController {
 
     @PostMapping("/upload")
     public void upload(@RequestParam("file") MultipartFile file, HttpServletResponse response) throws IOException {
