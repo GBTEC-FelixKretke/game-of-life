@@ -1,5 +1,7 @@
 package me.skulduggerry.gameoflife.controller;
 
+import static me.skulduggerry.gameoflife.controller.Binding.UPLOAD_PATH;
+
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +29,7 @@ public class GenerationController {
         this.mapper = mapper;
     }
 
-    @PostMapping("/upload")
+    @PostMapping(UPLOAD_PATH)
     public String upload(@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
         try {
             response.sendRedirect("/");
