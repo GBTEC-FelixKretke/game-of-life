@@ -23,7 +23,7 @@ class GenerationControllerIT {
         ResultActions result = mockMvc.perform(multipart("/upload").file(file));
         result.andExpect(status().is3xxRedirection()).andExpect(content().string("""
                 {
-                    "upload": "failed"
+                    "upload": "empty"
                 }
                 """));
     }

@@ -31,7 +31,7 @@ public class GenerationController {
             log.info("Uploaded file is empty");
             return """
                     {
-                        "upload": "failed"
+                        "upload": "empty"
                     }
                     """;
         } else {
