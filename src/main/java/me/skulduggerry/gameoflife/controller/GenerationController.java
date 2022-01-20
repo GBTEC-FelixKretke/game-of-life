@@ -19,8 +19,12 @@ import me.skulduggerry.gameoflife.model.Generation;
 @Slf4j
 public class GenerationController {
 
+    private final ObjectMapper mapper;
+
     @Autowired
-    private ObjectMapper mapper;
+    public GenerationController(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @PostMapping("/upload")
     public String upload(@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
