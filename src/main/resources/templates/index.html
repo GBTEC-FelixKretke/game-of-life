@@ -14,7 +14,7 @@
                 <p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
                 <form method="post" th:action="@{${uploadEndpoint}}" enctype="multipart/form-data">
                     <div class="form-group">
-                        <input type="file" name="file" accept="application/json" class="form-control-file">
+                        <input type="file" th:name="${file}" accept="application/json" class="form-control-file">
                     </div>
                     <button type="submit" class="btn btn-primary">Upload File</button>
                 </form>
