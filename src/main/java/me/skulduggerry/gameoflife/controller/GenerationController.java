@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
+import me.skulduggerry.gameoflife.exceptions.RedirectionFailedException;
 import me.skulduggerry.gameoflife.model.Generation;
 
 @RestController
@@ -28,7 +29,11 @@ public class GenerationController {
 
     @PostMapping("/upload")
     public String upload(@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
-        response.sendRedirect("/");
+        try {
+            response.sendRedirect("/");
+        } catch (IOException e) {
+            throw new RedirectionFailedException(e);
+        }
 
         if (file.isEmpty()) {
             log.info("Uploaded file is empty");
