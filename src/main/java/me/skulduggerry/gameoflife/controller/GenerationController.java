@@ -24,9 +24,18 @@ public class GenerationController {
 
     @PostMapping("/upload")
     public void upload(@RequestParam("file") MultipartFile file, HttpServletResponse response) throws IOException {
+
         log.info("Uploaded " + file.getName());
-        Generation generation = mapper.readValue(file.getInputStream(), Generation.class);
-        log.info(generation.toString());
+
+        if (file.isEmpty()) {
+            log.info("Uploaded file is empty");
+        } else {
+            log.info("Uploaded a valid file");
+
+            Generation generation = mapper.readValue(file.getInputStream(), Generation.class);
+            log.info(generation.toString());
+        }
+
         response.sendRedirect("/");
     }
 }
