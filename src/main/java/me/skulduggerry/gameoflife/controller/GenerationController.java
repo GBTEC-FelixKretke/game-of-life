@@ -28,7 +28,6 @@ public class GenerationController {
 
     @PostMapping("/upload")
     public String upload(@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
-
         response.sendRedirect("/");
 
         if (file.isEmpty()) {
