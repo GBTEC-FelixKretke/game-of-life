@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,22 +20,30 @@ import me.skulduggerry.gameoflife.model.Generation;
 public class GenerationController {
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @PostMapping("/upload")
-    public void upload(@RequestParam("file") MultipartFile file, HttpServletResponse response) throws IOException {
+    public String upload(@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
 
-        log.info("Uploaded " + file.getName());
+        response.sendRedirect("/");
 
         if (file.isEmpty()) {
             log.info("Uploaded file is empty");
+            return """
+                    {
+                        "upload": "failed"
+                    }
+                    """;
         } else {
             log.info("Uploaded a valid file");
 
             Generation generation = mapper.readValue(file.getInputStream(), Generation.class);
             log.info(generation.toString());
+            return """
+                    {
+                        "upload": "success"
+                    }
+                    """;
         }
-
-        response.sendRedirect("/");
     }
 }
