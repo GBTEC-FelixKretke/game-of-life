@@ -8,26 +8,24 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.skulduggerry.gameoflife.exceptions.RedirectionFailedException;
 import me.skulduggerry.gameoflife.model.Generation;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class GenerationController {
 
+    @NonNull
     private final ObjectMapper mapper;
-
-    @Autowired
-    public GenerationController(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
 
     @PostMapping(UPLOAD_PATH)
     public String upload(@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
