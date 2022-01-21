@@ -1,5 +1,7 @@
 package me.skulduggerry.gameoflife.controller;
 
+import static me.skulduggerry.gameoflife.controller.Binding.UPLOAD_PATH;
+import static me.skulduggerry.gameoflife.controller.ModelConstants.FILE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,9 +21,7 @@ class GenerationControllerIT {
 
     @Test
     void upload_empty_file_should_work() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", "".getBytes());
-        ResultActions result = mockMvc.perform(multipart("/upload").file(file));
-        result.andExpect(status().is3xxRedirection()).andExpect(content().string("""
+        getResult("").andExpect(status().is3xxRedirection()).andExpect(content().string("""
                 {
                     "upload": "empty"
                 }
@@ -46,12 +46,23 @@ class GenerationControllerIT {
                 }
                 """;
 
-        MockMultipartFile file = new MockMultipartFile("file", content.getBytes());
-        ResultActions result = mockMvc.perform(multipart("/upload").file(file));
-        result.andExpect(status().is3xxRedirection()).andExpect(content().string("""
+        getResult(content).andExpect(status().is3xxRedirection()).andExpect(content().string("""
                 {
                     "upload": "success"
                 }
                 """));
     }
+
+    public MockMultipartFile getFile(String content) {
+        return new MockMultipartFile(FILE, content.getBytes());
+    }
+
+    public ResultActions getResult(MockMultipartFile file) throws Exception {
+        return mockMvc.perform(multipart(UPLOAD_PATH).file(file));
+    }
+
+    public ResultActions getResult(String content) throws Exception {
+        return mockMvc.perform(multipart(UPLOAD_PATH).file(getFile(content)));
+    }
+
 }
