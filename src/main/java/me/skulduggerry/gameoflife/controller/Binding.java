@@ -1,9 +1,10 @@
 package me.skulduggerry.gameoflife.controller;
 
-public final class Binding {
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-    private Binding() {
-    }
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class Binding {
 
     public static final String ROOT = "/";
 
