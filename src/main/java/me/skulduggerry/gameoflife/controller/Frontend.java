@@ -1,6 +1,8 @@
 package me.skulduggerry.gameoflife.controller;
 
-import static me.skulduggerry.gameoflife.controller.Binding.*;
+import static me.skulduggerry.gameoflife.controller.Binding.INDEX_FORWARD;
+import static me.skulduggerry.gameoflife.controller.Binding.ROOT;
+import static me.skulduggerry.gameoflife.controller.Binding.UPLOAD_PATH;
 import static me.skulduggerry.gameoflife.controller.ModelConstants.FILE;
 import static me.skulduggerry.gameoflife.controller.ModelConstants.MESSAGE;
 
