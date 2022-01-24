@@ -1,15 +1,16 @@
 package me.skulduggerry.gameoflife.utils;
 
+import static lombok.AccessLevel.PRIVATE;
 import static org.thymeleaf.util.Validate.notNull;
 
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.thymeleaf.util.StringUtils;
 
-public class WebRequestUtils {
+import lombok.NoArgsConstructor;
 
-    private WebRequestUtils() {
-    }
+@NoArgsConstructor(access = PRIVATE)
+public class WebRequestUtils {
 
     /**
      * <p>Returns the path of the request if possible; otherwise {@code null}.</p>

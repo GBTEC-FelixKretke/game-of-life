@@ -1,5 +1,6 @@
 package me.skulduggerry.gameoflife.utils;
 
+import static lombok.AccessLevel.PRIVATE;
 import static me.skulduggerry.gameoflife.utils.DateTimeUtils.currentUtcTimeInMillis;
 import static me.skulduggerry.gameoflife.utils.WebRequestUtils.extractPath;
 import static org.thymeleaf.util.Validate.notNull;
@@ -11,10 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
-public class ExceptionHandlerUtils {
+import lombok.NoArgsConstructor;
 
-    private ExceptionHandlerUtils() {
-    }
+@NoArgsConstructor(access = PRIVATE)
+public class ExceptionHandlerUtils {
 
     public static ResponseEntity<Map<String, Object>> toResponseEntity(HttpStatus httpStatus, WebRequest webRequest) {
         notNull(httpStatus, "httpStatus");
