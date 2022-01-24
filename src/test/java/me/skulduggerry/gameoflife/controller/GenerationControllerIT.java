@@ -57,10 +57,6 @@ class GenerationControllerIT {
         return new MockMultipartFile(FILE, content.getBytes());
     }
 
-    private ResultActions getResult(MockMultipartFile file) throws Exception {
-        return mockMvc.perform(multipart(UPLOAD_PATH).file(file));
-    }
-
     private ResultActions getResult(String content) throws Exception {
         return mockMvc.perform(multipart(UPLOAD_PATH).file(getFile(content)));
     }
