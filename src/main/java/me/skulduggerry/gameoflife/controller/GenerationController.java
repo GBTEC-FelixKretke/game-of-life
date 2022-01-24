@@ -1,5 +1,6 @@
 package me.skulduggerry.gameoflife.controller;
 
+import static me.skulduggerry.gameoflife.controller.Binding.NEXT_GENERATION_PATH;
 import static me.skulduggerry.gameoflife.controller.Binding.UPLOAD_PATH;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,5 +55,11 @@ public class GenerationController {
                     }
                     """;
         }
+    }
+
+    @GetMapping(NEXT_GENERATION_PATH)
+    public String getNextGeneration() {
+        log.info("Request for next generation.");
+        return "Test";
     }
 }
