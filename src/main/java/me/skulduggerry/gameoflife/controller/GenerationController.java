@@ -17,7 +17,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.skulduggerry.gameoflife.exceptions.RedirectionFailedException;
-import me.skulduggerry.gameoflife.model.Generation;
+import me.skulduggerry.gameoflife.model.TransferGeneration;
 
 @RestController
 @Slf4j
@@ -45,8 +45,8 @@ public class GenerationController {
         } else {
             log.info("Uploaded a valid file");
 
-            Generation generation = mapper.readValue(file.getInputStream(), Generation.class);
-            log.info(generation.toString());
+            TransferGeneration transferGeneration = mapper.readValue(file.getInputStream(), TransferGeneration.class);
+            log.info(transferGeneration.toString());
             return """
                     {
                         "upload": "success"
