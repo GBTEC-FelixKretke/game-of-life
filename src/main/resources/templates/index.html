@@ -22,7 +22,9 @@
             <div class="col-md-6 mx-auto">
                 <div>
                     <h2>Calculate the next generation</h2>
-                    <button th:action="@{${nextGenEndpoint}}" class="btn btn-primary">Next Generation</button>
+                    <form method="get" th:action="@{${nextGenEndpoint}}">
+                        <button class="btn btn-primary">Next Generation</button>
+                    </form>
                 </div>
             </div>
         </div>
