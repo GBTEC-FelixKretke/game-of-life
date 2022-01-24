@@ -9,7 +9,7 @@
 <section class="my-5">
     <div class="container">
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-6 mx-auto">
                 <h2>Upload a generation</h2>
                 <p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
                 <form method="post" th:action="@{${uploadEndpoint}}" enctype="multipart/form-data">
@@ -18,6 +18,12 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Upload File</button>
                 </form>
+            </div>
+            <div class="col-md-6 mx-auto">
+                <div>
+                    <h2>Calculate the next generation</h2>
+                    <button th:action="@{${nextGenEndpoint}}" class="btn btn-primary">Next Generation</button>
+                </div>
             </div>
         </div>
     </div>

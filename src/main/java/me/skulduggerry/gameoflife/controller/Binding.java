@@ -10,6 +10,7 @@ public final class Binding {
 
     public static final String INDEX_PATH = ROOT;
     public static final String UPLOAD_PATH = ROOT + "upload";
+    public static final String NEXT_GENERATION = ROOT + "/nextGen";
 
     public static final String INDEX_FORWARD = "index";
 }
