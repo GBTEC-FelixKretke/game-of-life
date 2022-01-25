@@ -38,12 +38,6 @@ public class GenerationController {
 
     @PostMapping(UPLOAD_PATH)
     public String upload(@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
-        try {
-            response.sendRedirect("/");
-        } catch (IOException e) {
-            throw new RedirectionFailedException(e);
-        }
-
         if (file.isEmpty()) {
             log.info("Uploaded file is empty");
             return """
@@ -57,6 +51,13 @@ public class GenerationController {
             // TODO Catch with UncheckedIOException
             TransferGeneration transferGeneration = mapper.readValue(file.getInputStream(), TransferGeneration.class);
             log.info(transferGeneration.toString());
+
+            try {
+                response.sendRedirect("/");
+            } catch (IOException e) {
+                throw new RedirectionFailedException(e);
+            }
+
             return """
                     {
                         "upload": "success"
