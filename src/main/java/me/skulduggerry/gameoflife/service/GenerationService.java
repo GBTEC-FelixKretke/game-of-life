@@ -16,7 +16,7 @@ public class GenerationService {
         Dimension dimension = currentGeneration.getDimension();
         WorkGeneration.Cell[][] nextGenerationCells = getNextGenerationCells(dimension, currentGeneration.getCells());
 
-        currentGeneration.setCells(nextGenerationCells);
+        currentGeneration.setNewData(dimension, nextGenerationCells);
 
         return currentGeneration;
     }
