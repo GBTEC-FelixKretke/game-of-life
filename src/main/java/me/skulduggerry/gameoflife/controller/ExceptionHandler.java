@@ -10,6 +10,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,25 +29,25 @@ public class ExceptionHandler {
     private static ResponseEntity<?> handleException(HttpStatus httpStatus, Exception cause, WebRequest webRequest) {
         String path = extractPath(webRequest);
         String request = path != null ? "'" + path + "' " : "";
-        log.debug(format("Caught exception while handling request %s therefore status code '%s' [%d] will be returned!", request,
+        log.warn(format("Caught exception while handling request %s therefore status code '%s' [%d] will be returned!", request,
             httpStatus.getReasonPhrase(), httpStatus.value()), cause);
         return toResponseEntity(httpStatus, webRequest);
     }
 
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    @ResponseStatus(code = INTERNAL_SERVER_ERROR)
     @org.springframework.web.bind.annotation.ExceptionHandler({ IOException.class })
     public ResponseEntity<?> internalServerError(Exception cause, WebRequest request) {
         return handleException(INTERNAL_SERVER_ERROR, cause, request);
     }
 
-    @ResponseStatus(NOT_FOUND)
+    @ResponseStatus(code = NOT_FOUND)
     @org.springframework.web.bind.annotation.ExceptionHandler({ RedirectionFailedException.class })
     public ResponseEntity<?> notFound(Exception cause, WebRequest request) {
         return handleException(NOT_FOUND, cause, request);
     }
 
-    @ResponseStatus(BAD_REQUEST)
-    @org.springframework.web.bind.annotation.ExceptionHandler({ InvalidDataException.class })
+    @ResponseStatus(code = BAD_REQUEST)
+    @org.springframework.web.bind.annotation.ExceptionHandler({ InvalidDataException.class, ValueInstantiationException.class })
     public ResponseEntity<?> badRequest(Exception cause, WebRequest request) {
         return handleException(BAD_REQUEST, cause, request);
     }
