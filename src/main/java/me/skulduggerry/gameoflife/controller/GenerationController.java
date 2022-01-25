@@ -18,8 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.skulduggerry.gameoflife.converter.GenerationConverter;
 import me.skulduggerry.gameoflife.exceptions.RedirectionFailedException;
 import me.skulduggerry.gameoflife.model.TransferGeneration;
+import me.skulduggerry.gameoflife.model.WorkGeneration;
+import me.skulduggerry.gameoflife.service.GenerationService;
 
 @RestController
 @Slf4j
@@ -28,6 +31,10 @@ public class GenerationController {
 
     @NonNull
     private final ObjectMapper mapper;
+    @NonNull
+    private final GenerationService generationService;
+    @NonNull
+    private final GenerationConverter generationConverter;
 
     @PostMapping(UPLOAD_PATH)
     public String upload(@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
@@ -58,8 +65,9 @@ public class GenerationController {
     }
 
     @GetMapping(NEXT_GENERATION_PATH)
-    public String getNextGeneration() {
+    public TransferGeneration getNextGeneration() {
         log.info("Request for next generation.");
-        return "Test";
+        WorkGeneration currentGeneration = generationService.getNextGeneration();
+        return generationConverter.toTransferGeneration(currentGeneration);
     }
 }
