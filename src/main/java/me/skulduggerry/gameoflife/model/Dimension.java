@@ -1,4 +1,6 @@
 package me.skulduggerry.gameoflife.model;
 
-public record Dimension(Integer width, Integer height) {
+import org.springframework.lang.NonNull;
+
+public record Dimension(@NonNull Integer width, @NonNull Integer height) {
 }
