@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import me.skulduggerry.gameoflife.model.Dimension;
@@ -13,7 +14,7 @@ import me.skulduggerry.gameoflife.model.WorkGeneration;
 @Component
 public class GenerationConverter {
 
-    public WorkGeneration toWorkGeneration(TransferGeneration transferGeneration) {
+    public WorkGeneration toWorkGeneration(@NonNull TransferGeneration transferGeneration) {
         WorkGeneration.Cell[][] cells = transferGeneration.fieldData()
                                                           .stream()
                                                           .map(line -> Arrays.stream(line.split(""))
@@ -22,7 +23,7 @@ public class GenerationConverter {
                                                                              .toArray(WorkGeneration.Cell[]::new))
                                                           .toArray(WorkGeneration.Cell[][]::new);
 
-        WorkGeneration.getInstance().setCells(cells);
+        WorkGeneration.getInstance().setNewData(transferGeneration.dimension(), cells);
         return WorkGeneration.getInstance();
     }
 
