@@ -54,6 +54,7 @@ public class GenerationController {
         } else {
             log.info("Uploaded a valid file");
 
+            // TODO Catch with UncheckedIOException
             TransferGeneration transferGeneration = mapper.readValue(file.getInputStream(), TransferGeneration.class);
             log.info(transferGeneration.toString());
             return """
