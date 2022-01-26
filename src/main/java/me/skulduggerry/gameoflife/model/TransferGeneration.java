@@ -10,7 +10,7 @@ public record TransferGeneration(@NonNull Dimension dimension, @NonNull List<Str
 
     public TransferGeneration {
         if (dimension.height() != fieldData.size()) {
-            throw new InvalidDataException("fieldData has not the same size as dimension");
+            throw new InvalidDataException("fieldData has not the same size as dimension.");
         }
 
         fieldData.forEach(line -> {
