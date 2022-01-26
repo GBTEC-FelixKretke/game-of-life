@@ -1,5 +1,6 @@
 package me.skulduggerry.gameoflife.controller;
 
+import static me.skulduggerry.gameoflife.controller.Binding.CURRENT_GENERATION_PATH;
 import static me.skulduggerry.gameoflife.controller.Binding.NEXT_GENERATION_PATH;
 import static me.skulduggerry.gameoflife.controller.Binding.UPLOAD_PATH;
 
@@ -52,7 +53,7 @@ public class GenerationController {
         return transferGeneration;
     }
 
-    @GetMapping()
+    @GetMapping(CURRENT_GENERATION_PATH)
     public TransferGeneration getCurrentGeneration() {
         log.debug("Request for current generation.");
         TransferGeneration transferGeneration = generationConverter.toTransferGeneration(WorkGeneration.getInstance());
