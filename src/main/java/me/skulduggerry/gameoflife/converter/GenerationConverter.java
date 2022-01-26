@@ -29,10 +29,11 @@ public class GenerationConverter {
 
     public TransferGeneration toTransferGeneration(WorkGeneration workGeneration) {
         Dimension dimension = workGeneration.getDimension();
-        List<String> fieldData =
-            Arrays.stream(workGeneration.getCells())
-                  .map(cells -> Arrays.stream(cells).map(cell -> cell.alive() ? "x" : "o").collect(Collectors.joining()))
-                  .toList();
+        List<String> fieldData = Arrays.stream(workGeneration.getCells())
+                                       .map(cells -> Arrays.stream(cells)
+                                                           .map(cell -> cell != null && cell.alive() ? "x" : "o")
+                                                           .collect(Collectors.joining()))
+                                       .toList();
 
         return new TransferGeneration(dimension, fieldData);
     }
