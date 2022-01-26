@@ -27,13 +27,51 @@
 
 <script th:inline="javascript">
 
+    const currentGenUrl = [[${currentGenEndpoint}]]
     const nextGenUrl = [[${nextGenEndpoint}]];
+    const uploadUrl = [[${uploadEndpoint}]];
+
+    function disableButton(disabled, buttonID) {
+        const button = document.getElementById(buttonID);
+        if (button == null) return;
+        button.disabled = disabled;
+        console.debug("Disabled button");
+    }
+
+    function upload() {
+        disableButton(true, "upload_button")
+        const file = document.getElementById("file").files[0];
+
+        const fr = new FileReader();
+        fr.onload = function () {
+            const response = sendHttpRequest("POST", uploadUrl, false, fr.result.toString());
+            if (response.upload != null && response.upload === "success") {
+                visualize(JSON.parse(fr.result.toString()));
+            } else {
+                alert("Uploaded data is invalid!")
+            }
+        }
+
+        fr.readAsText(file);
+    }
+
+    function getCurrentGeneration() {
+        visualize(sendHttpRequest("GET", currentGenUrl, false, null));
+    }
 
     function getNextGeneration() {
+        visualize(sendHttpRequest("GET", nextGenUrl, false, null));
+    }
+
+    function sendHttpRequest(method, url, async_, message) {
         const httpRequest = new XMLHttpRequest();
-        httpRequest.open("GET", nextGenUrl, false);
-        httpRequest.send(null);
-        visualize(JSON.parse(httpRequest.responseText));
+        httpRequest.open(method, url, async_);
+        httpRequest.setRequestHeader("Content-Type", "application/json");
+        httpRequest.send(message);
+
+        console.debug("Send json:\n" + message);
+        console.debug("Received json:\n" + httpRequest.responseText);
+        return JSON.parse(httpRequest.responseText);
     }
 
     function visualize(data) {
@@ -77,21 +115,26 @@
             <div class="col-md-6 mx-auto">
                 <h2>Upload a generation</h2>
                 <p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
-                <form method="post" th:action="@{${uploadEndpoint}}" enctype="multipart/form-data">
+                <form>
                     <div class="form-group">
-                        <input type="file" th:name="${file}" accept="application/json" class="form-control-file">
+                        <input onchange="disableButton(false, 'upload_button')" type="file" id="file" th:name="${file}"
+                               accept="application/json" class="form-control-file">
                     </div>
-                    <button type="submit" class="btn btn-primary">Upload File</button>
+                    <button type="submit" id="upload_button" class="btn btn-primary" disabled="disabled"
+                            onclick="upload()">Upload File
+                    </button>
                 </form>
             </div>
             <div class="col-md-6 mx-auto">
                 <h2>Calculate the next generation</h2>
-                <button class="btn btn-primary" onclick="getNextGeneration()">Next Generation</button>
+                <button id="next_gen_button" class="btn btn-primary" onclick="getNextGeneration()">
+                    Next Generation
+                </button>
             </div>
         </div>
 
         <div id="table_div" class="relative">
-            <table id="table">
+            <table id="table" onload="getCurrentGeneration()">
             </table>
         </div>
     </div>
