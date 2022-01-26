@@ -43,13 +43,13 @@ public class GenerationController {
                 """;
     }
 
-    @GetMapping(NEXT_GENERATION_PATH)
+    @GetMapping(value = NEXT_GENERATION_PATH, produces = "application/json")
     public TransferGeneration getNextGeneration() {
         log.debug("Request for next generation.");
         return generationService.getNextGeneration();
     }
 
-    @GetMapping(CURRENT_GENERATION_PATH)
+    @GetMapping(value = CURRENT_GENERATION_PATH, produces = "application/json")
     public TransferGeneration getCurrentGeneration() {
         log.debug("Request for current generation.");
         return generationService.getCurrentGeneration();
