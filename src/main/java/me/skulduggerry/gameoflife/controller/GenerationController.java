@@ -55,8 +55,8 @@ public class GenerationController {
     @GetMapping()
     public TransferGeneration getCurrentGeneration() {
         log.debug("Request for current generation.");
-        TransferGeneration trsTransferGeneration = generationConverter.toTransferGeneration(WorkGeneration.getInstance());
-        log.debug("Send json:\n" + trsTransferGeneration.toString());
-        return trsTransferGeneration;
+        TransferGeneration transferGeneration = generationConverter.toTransferGeneration(WorkGeneration.getInstance());
+        log.debug("Send json:\n" + transferGeneration.toString());
+        return transferGeneration;
     }
 }
