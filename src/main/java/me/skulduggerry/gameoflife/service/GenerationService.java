@@ -79,8 +79,9 @@ public class GenerationService {
         if (!isBottomEdge && !isLeftEdge && cells[y + 1][x - 1].alive()) {
             livingCellsAround++;
         }
-        if (!isBottomEdge && cells[y + 1][x].alive())
+        if (!isBottomEdge && cells[y + 1][x].alive()) {
             livingCellsAround++;
+        }
         if (!isBottomEdge && !isRightEdge && cells[y + 1][x + 1].alive()) {
             livingCellsAround++;
         }
