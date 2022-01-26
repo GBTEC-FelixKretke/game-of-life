@@ -3,22 +3,34 @@ package me.skulduggerry.gameoflife.service;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import me.skulduggerry.gameoflife.converter.GenerationConverter;
 import me.skulduggerry.gameoflife.model.Dimension;
+import me.skulduggerry.gameoflife.model.TransferGeneration;
 import me.skulduggerry.gameoflife.model.WorkGeneration;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GenerationService {
 
     private final WorkGeneration currentGeneration = WorkGeneration.getInstance();
+    private final GenerationConverter generationConverter;
 
-    public WorkGeneration getNextGeneration() {
+    public TransferGeneration getNextGeneration() {
         Dimension dimension = currentGeneration.getDimension();
         WorkGeneration.Cell[][] nextGenerationCells = getNextGenerationCells(dimension, currentGeneration.getCells());
 
         currentGeneration.setNewData(dimension, nextGenerationCells);
+        TransferGeneration transferGeneration = generationConverter.toTransferGeneration(currentGeneration);
+        log.debug("Send json:\n" + transferGeneration.toString());
+        return transferGeneration;
+    }
 
-        return currentGeneration;
+    public TransferGeneration getCurrentGeneration() {
+        TransferGeneration transferGeneration = generationConverter.toTransferGeneration(WorkGeneration.getInstance());
+        log.debug("Send json:\n" + transferGeneration.toString());
+        return transferGeneration;
     }
 
     private WorkGeneration.Cell[][] getNextGenerationCells(Dimension dimension, WorkGeneration.Cell[][] currentGenerationCells) {

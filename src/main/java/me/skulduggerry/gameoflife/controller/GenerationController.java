@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.skulduggerry.gameoflife.converter.GenerationConverter;
 import me.skulduggerry.gameoflife.model.TransferGeneration;
-import me.skulduggerry.gameoflife.model.WorkGeneration;
 import me.skulduggerry.gameoflife.service.GenerationService;
 
 @RestController
@@ -47,17 +46,12 @@ public class GenerationController {
     @GetMapping(NEXT_GENERATION_PATH)
     public TransferGeneration getNextGeneration() {
         log.debug("Request for next generation.");
-        WorkGeneration currentGeneration = generationService.getNextGeneration();
-        TransferGeneration transferGeneration = generationConverter.toTransferGeneration(currentGeneration);
-        log.debug("Send json:\n" + transferGeneration.toString());
-        return transferGeneration;
+        return generationService.getNextGeneration();
     }
 
     @GetMapping(CURRENT_GENERATION_PATH)
     public TransferGeneration getCurrentGeneration() {
         log.debug("Request for current generation.");
-        TransferGeneration transferGeneration = generationConverter.toTransferGeneration(WorkGeneration.getInstance());
-        log.debug("Send json:\n" + transferGeneration.toString());
-        return transferGeneration;
+        return generationService.getCurrentGeneration();
     }
 }
