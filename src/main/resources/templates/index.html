@@ -3,12 +3,77 @@
 <head>
     <title>Game-of-Life</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <style>
+        table {
+            position: sticky;
+            empty-cells: show;
+        }
+
+        td {
+            border: 1px solid black;
+        }
+
+        div.relative {
+            position: relative;
+            top: 50px;
+        }
+
+        .black {
+            background: black;
+        }
+    </style>
 </head>
 <body>
 
+<script th:inline="javascript">
+
+    const nextGenUrl = [[${nextGenEndpoint}]];
+
+    function getNextGeneration() {
+        const httpRequest = new XMLHttpRequest();
+        httpRequest.open("GET", nextGenUrl, false);
+        httpRequest.send(null);
+        visualize(JSON.parse(httpRequest.responseText));
+    }
+
+    function visualize(data) {
+        const maxDivWidth = window.innerWidth - document.getElementById("row").offsetWidth;
+        const maxDivHeight = window.innerHeight - document.getElementById("row").offsetHeight;
+        const smallerDivDimension = (maxDivWidth < maxDivHeight ? maxDivWidth : maxDivHeight) - 100;
+
+        const table = document.getElementById("table")
+        table.setAttribute("width", smallerDivDimension + "px");
+        table.setAttribute("height", smallerDivDimension + "px");
+        deleteAllChildren(table);
+
+        for (let y = 0; y < data.dimension.height; y++) {
+
+            let row = document.createElement("tr");
+            table.appendChild(row);
+
+            for (let x = 0; x < data.dimension.width; x++) {
+                let cell = document.createElement("td");
+
+                if (data.fieldData[y].charAt(x) === 'x') {
+                    cell.setAttribute("class", "black");
+                }
+
+                row.appendChild(cell);
+            }
+        }
+    }
+
+    function deleteAllChildren(parent) {
+        while (parent.firstChild) {
+            parent.firstChild.remove()
+        }
+    }
+
+</script>
+
 <section class="my-5">
     <div class="container">
-        <div class="row">
+        <div class="row" id="row">
             <div class="col-md-6 mx-auto">
                 <h2>Upload a generation</h2>
                 <p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
@@ -20,13 +85,14 @@
                 </form>
             </div>
             <div class="col-md-6 mx-auto">
-                <div>
-                    <h2>Calculate the next generation</h2>
-                    <form method="get" th:action="@{${nextGenEndpoint}}">
-                        <button class="btn btn-primary">Next Generation</button>
-                    </form>
-                </div>
+                <h2>Calculate the next generation</h2>
+                <button class="btn btn-primary" onclick="getNextGeneration()">Next Generation</button>
             </div>
+        </div>
+
+        <div id="table_div" class="relative">
+            <table id="table">
+            </table>
         </div>
     </div>
 </section>
