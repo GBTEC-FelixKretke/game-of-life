@@ -51,6 +51,7 @@ public class GenerationController {
             // TODO Catch with UncheckedIOException
             TransferGeneration transferGeneration = mapper.readValue(file.getInputStream(), TransferGeneration.class);
             log.info(transferGeneration.toString());
+            generationConverter.toWorkGeneration(transferGeneration);
 
             try {
                 response.sendRedirect("/");
@@ -70,6 +71,8 @@ public class GenerationController {
     public TransferGeneration getNextGeneration() {
         log.info("Request for next generation.");
         WorkGeneration currentGeneration = generationService.getNextGeneration();
-        return generationConverter.toTransferGeneration(currentGeneration);
+        TransferGeneration transferGeneration = generationConverter.toTransferGeneration(currentGeneration);
+        log.info(transferGeneration.toString());
+        return transferGeneration;
     }
 }
