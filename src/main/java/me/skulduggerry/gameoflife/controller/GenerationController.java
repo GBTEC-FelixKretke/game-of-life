@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.skulduggerry.gameoflife.converter.GenerationConverter;
-import me.skulduggerry.gameoflife.model.TransferGeneration;
+import me.skulduggerry.gameoflife.model.Generation;
 import me.skulduggerry.gameoflife.service.GenerationService;
 
 @RestController
@@ -27,14 +26,10 @@ public class GenerationController {
     private final ObjectMapper mapper;
     @NonNull
     private final GenerationService generationService;
-    @NonNull
-    private final GenerationConverter generationConverter;
 
     @PostMapping(value = UPLOAD_PATH, consumes = "application/json", produces = "application/json")
-    public String upload(@RequestBody TransferGeneration transferGeneration) {
-        log.debug("Uploaded a valid file");
-        log.debug("Send json:\n" + transferGeneration.toString());
-        generationConverter.toWorkGeneration(transferGeneration);
+    public String upload(@RequestBody Generation generation) {
+        generationService.saveUpload(generation);
 
         return """
                 {
@@ -43,15 +38,13 @@ public class GenerationController {
                 """;
     }
 
-    @GetMapping(value = NEXT_GENERATION_PATH, produces = "application/json")
-    public TransferGeneration getNextGeneration() {
-        log.debug("Request for next generation.");
-        return generationService.getNextGeneration();
+    @GetMapping(value = CURRENT_GENERATION_PATH, produces = "application/json")
+    public Generation getCurrentGeneration() {
+        return generationService.getCurrentGeneration();
     }
 
-    @GetMapping(value = CURRENT_GENERATION_PATH, produces = "application/json")
-    public TransferGeneration getCurrentGeneration() {
-        log.debug("Request for current generation.");
-        return generationService.getCurrentGeneration();
+    @GetMapping(value = NEXT_GENERATION_PATH, produces = "application/json")
+    public Generation getNextGeneration() {
+        return generationService.getNextGeneration();
     }
 }
