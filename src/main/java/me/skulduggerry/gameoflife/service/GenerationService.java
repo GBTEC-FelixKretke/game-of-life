@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.skulduggerry.gameoflife.model.Dimension;
 import me.skulduggerry.gameoflife.model.Generation;
@@ -13,7 +13,7 @@ import me.skulduggerry.gameoflife.model.GenerationContainer;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class GenerationService {
 
     public void saveUpload(Generation generation) {

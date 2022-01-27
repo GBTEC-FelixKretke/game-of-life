@@ -7,14 +7,12 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-import lombok.RequiredArgsConstructor;
 import me.skulduggerry.gameoflife.model.Dimension;
 import me.skulduggerry.gameoflife.model.Generation;
 
-@RequiredArgsConstructor
 class GenerationServiceTest {
 
-    private final GenerationService generationService;
+    private final GenerationService generationService = new GenerationService();
 
     @Test
     void save_upload() {
