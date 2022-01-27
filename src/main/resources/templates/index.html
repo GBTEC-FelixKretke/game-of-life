@@ -4,18 +4,33 @@
     <title>Game-of-Life</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #wrapper {
+            min-height: 100%;
+        }
+
+        #container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            min-height: 30%;
+        }
+
+        #table_div {
+            min-height: 70%;
+        }
+
         table {
-            position: sticky;
             empty-cells: show;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         td {
             border: 1px solid black;
-        }
-
-        div.relative {
-            position: relative;
-            top: 50px;
         }
 
         .black {
@@ -72,13 +87,18 @@
     }
 
     function visualize(data) {
-        const maxDivWidth = window.innerWidth - document.getElementById("row").offsetWidth;
-        const maxDivHeight = window.innerHeight - document.getElementById("row").offsetHeight;
-        const smallerDivDimension = (maxDivWidth < maxDivHeight ? maxDivWidth : maxDivHeight) - 100;
+        const maxTableWidth = window.innerWidth - 20;
+        const maxTableHeight = window.innerHeight - document.getElementById("container").clientHeight - 60;
+
+        const maxCellSizeForWidth = maxTableWidth / data.dimension.width;
+        const maxCellSizeForHeight = maxTableHeight / data.dimension.height;
+
+        const maxCellSize = maxCellSizeForWidth < maxCellSizeForHeight ? maxCellSizeForWidth : maxCellSizeForHeight;
 
         const table = document.getElementById("table")
-        table.setAttribute("width", smallerDivDimension + "px");
-        table.setAttribute("height", smallerDivDimension + "px");
+        table.setAttribute("width", maxCellSize * data.dimension.width + "px");
+        table.setAttribute("height", maxCellSize * data.dimension.height + "px");
+
         deleteAllChildren(table);
 
         for (let y = 0; y < data.dimension.height; y++) {
@@ -106,9 +126,9 @@
 
 </script>
 
-<section class="my-5">
-    <div class="container">
-        <div class="row" id="row">
+<div id="wrapper">
+    <div class="container" id="container">
+        <div class="row">
             <div class="col-md-6 mx-auto">
                 <h2>Upload a generation</h2>
                 <p class="alert alert-primary">"Upload a file."</p>
@@ -130,13 +150,13 @@
                 </button>
             </div>
         </div>
-
-        <div id="table_div" class="relative">
-            <table id="table" onload="getCurrentGeneration()">
-            </table>
-        </div>
     </div>
-</section>
+
+    <div id="table_div">
+        <table id="table" onload="getCurrentGeneration()">
+        </table>
+    </div>
+</div>
 
 </body>
 </html>
