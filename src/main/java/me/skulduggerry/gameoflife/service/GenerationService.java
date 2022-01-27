@@ -16,19 +16,18 @@ import me.skulduggerry.gameoflife.model.GenerationContainer;
 @RequiredArgsConstructor
 public class GenerationService {
 
-    private final Generation currentGeneration = GenerationContainer.getCurrentGeneration();
-
     public void saveUpload(Generation generation) {
         GenerationContainer.setCurrentGeneration(generation);
     }
 
     public Generation getCurrentGeneration() {
-        return currentGeneration;
+        return GenerationContainer.getCurrentGeneration();
     }
 
     public Generation getNextGeneration() {
-        Dimension dimension = currentGeneration.dimension();
-        List<List<Integer>> nextGenerationCells = getNextGenerationCells(dimension, currentGeneration.cells());
+        Dimension dimension = GenerationContainer.getCurrentGeneration().dimension();
+        List<List<Integer>> nextGenerationCells =
+            getNextGenerationCells(dimension, GenerationContainer.getCurrentGeneration().cells());
 
         GenerationContainer.setCurrentGeneration(new Generation(dimension, nextGenerationCells));
 
@@ -41,8 +40,7 @@ public class GenerationService {
         for (int y = 0; y < dimension.height(); y++) {
             nextGenerationCells.add(y, new ArrayList<>(dimension.width()));
             for (int x = 0; x < dimension.width(); x++) {
-                int livingCellsAround =
-                    getLivingCellsAround(x, y, dimension.width(), dimension.height(), currentGeneration.cells());
+                int livingCellsAround = getLivingCellsAround(x, y, dimension.width(), dimension.height(), currentGenerationCells);
 
                 if (livingCellsAround == 3) {
                     nextGenerationCells.get(y).add(x, 1);
