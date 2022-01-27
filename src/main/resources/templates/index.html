@@ -27,20 +27,19 @@
 
 <script th:inline="javascript">
 
-    const currentGenUrl = [[${currentGenEndpoint}]]
-    const nextGenUrl = [[${nextGenEndpoint}]];
-    const uploadUrl = [[${uploadEndpoint}]];
+    const currentGenUrl = [[${current_gen_endpoint}]]
+    const nextGenUrl = [[${next_gen_endpoint}]];
+    const uploadUrl = [[${upload_endpoint}]];
 
     function disableButton(disabled, buttonID) {
         const button = document.getElementById(buttonID);
         if (button == null) return;
         button.disabled = disabled;
-        console.debug("Disabled button");
     }
 
     function upload() {
         disableButton(true, "upload_button")
-        const file = document.getElementById("file").files[0];
+        const file = document.getElementById([[${file_id}]]).files[0];
 
         const fr = new FileReader();
         fr.onload = function () {
@@ -48,7 +47,7 @@
             if (response.upload != null && response.upload === "success") {
                 visualize(JSON.parse(fr.result.toString()));
             } else {
-                alert("Uploaded data is invalid!")
+                alert([[${upload_invalid}]])
             }
         }
 
@@ -69,8 +68,6 @@
         httpRequest.setRequestHeader("Content-Type", "application/json");
         httpRequest.send(message);
 
-        console.debug("Send json:\n" + message);
-        console.debug("Received json:\n" + httpRequest.responseText);
         return JSON.parse(httpRequest.responseText);
     }
 
@@ -79,7 +76,7 @@
         const maxDivHeight = window.innerHeight - document.getElementById("row").offsetHeight;
         const smallerDivDimension = (maxDivWidth < maxDivHeight ? maxDivWidth : maxDivHeight) - 100;
 
-        const table = document.getElementById("table")
+        const table = document.getElementById([[${table_id}]])
         table.setAttribute("width", smallerDivDimension + "px");
         table.setAttribute("height", smallerDivDimension + "px");
         deleteAllChildren(table);
@@ -113,22 +110,23 @@
     <div class="container">
         <div class="row" id="row">
             <div class="col-md-6 mx-auto">
-                <h2>Upload a generation</h2>
-                <p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
+                <h2 th:text="${upload_title}"></h2>
+                <p th:text="${upload_message}" th:if="${upload_message ne null}" class="alert alert-primary"></p>
                 <form>
                     <div class="form-group">
-                        <input onchange="disableButton(false, 'upload_button')" type="file" id="file" th:name="${file}"
+                        <input onchange="disableButton(false, 'upload_button')" type="file" th:id="${file_id}"
+                               th:name="${file_id}"
                                accept="application/json" class="form-control-file">
                     </div>
-                    <button type="submit" id="upload_button" class="btn btn-primary" disabled="disabled"
-                            onclick="upload()">Upload File
-                    </button>
+                    <button type="submit" th:id="${upload_button_id}" th:text="${upload_button}" class="btn btn-primary"
+                            disabled="disabled"
+                            onclick="upload()"></button>
                 </form>
             </div>
             <div class="col-md-6 mx-auto">
-                <h2>Calculate the next generation</h2>
-                <button id="next_gen_button" class="btn btn-primary" onclick="getNextGeneration()">
-                    Next Generation
+                <h2 th:text="${next_gen_title}"></h2>
+                <button th:id="${next_gen_button_id}" th:text="${next_gen_button}" class="btn btn-primary"
+                        onclick="getNextGeneration()">
                 </button>
             </div>
         </div>
