@@ -6,7 +6,6 @@ import static me.skulduggerry.gameoflife.utils.ExceptionHandlerUtils.toResponseE
 import static me.skulduggerry.gameoflife.utils.WebRequestUtils.extractPath;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.io.IOException;
 
@@ -19,8 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import lombok.extern.slf4j.Slf4j;
-import me.skulduggerry.gameoflife.exceptions.InvalidDataException;
-import me.skulduggerry.gameoflife.exceptions.RedirectionFailedException;
+import me.skulduggerry.gameoflife.exception.InvalidDataException;
 
 @Slf4j
 @ControllerAdvice
@@ -38,12 +36,6 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler({ IOException.class })
     public ResponseEntity<?> internalServerError(Exception cause, WebRequest request) {
         return handleException(INTERNAL_SERVER_ERROR, cause, request);
-    }
-
-    @ResponseStatus(code = NOT_FOUND)
-    @org.springframework.web.bind.annotation.ExceptionHandler({ RedirectionFailedException.class })
-    public ResponseEntity<?> notFound(Exception cause, WebRequest request) {
-        return handleException(NOT_FOUND, cause, request);
     }
 
     @ResponseStatus(code = BAD_REQUEST)
