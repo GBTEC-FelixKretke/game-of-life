@@ -2,11 +2,21 @@ package me.skulduggerry.gameoflife.model;
 
 import java.util.List;
 
-import lombok.Data;
+import org.springframework.lang.NonNull;
 
-@Data
-public class Generation {
+import me.skulduggerry.gameoflife.exception.InvalidDataException;
 
-    private Dimension dimension;
-    private List<String> fieldData;
+public record Generation(@NonNull Dimension dimension, @NonNull List<List<Integer>> cells) {
+
+    public Generation {
+        if (dimension.height() != cells.size()) {
+            throw new InvalidDataException("fieldData has not the same size as dimension height");
+        }
+
+        cells.forEach(row -> {
+            if (row == null || row.size() != dimension.width()) {
+                throw new InvalidDataException("row is null or has not the right length");
+            }
+        });
+    }
 }

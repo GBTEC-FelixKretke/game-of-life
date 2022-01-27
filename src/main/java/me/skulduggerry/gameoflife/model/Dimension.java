@@ -1,10 +1,6 @@
 package me.skulduggerry.gameoflife.model;
 
-import lombok.Data;
+import org.springframework.lang.NonNull;
 
-@Data
-public class Dimension {
-
-    private Integer width;
-    private Integer height;
+public record Dimension(@NonNull Integer width, @NonNull Integer height) {
 }

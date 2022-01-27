@@ -1,23 +1,21 @@
 package me.skulduggerry.gameoflife.controller;
 
+import static me.skulduggerry.gameoflife.controller.Binding.CURRENT_GENERATION_PATH;
+import static me.skulduggerry.gameoflife.controller.Binding.NEXT_GENERATION_PATH;
 import static me.skulduggerry.gameoflife.controller.Binding.UPLOAD_PATH;
-
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.skulduggerry.gameoflife.exceptions.RedirectionFailedException;
 import me.skulduggerry.gameoflife.model.Generation;
+import me.skulduggerry.gameoflife.service.GenerationService;
 
 @RestController
 @Slf4j
@@ -26,32 +24,27 @@ public class GenerationController {
 
     @NonNull
     private final ObjectMapper mapper;
+    @NonNull
+    private final GenerationService generationService;
 
-    @PostMapping(UPLOAD_PATH)
-    public String upload(@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
-        try {
-            response.sendRedirect("/");
-        } catch (IOException e) {
-            throw new RedirectionFailedException(e);
-        }
+    @PostMapping(value = UPLOAD_PATH, consumes = "application/json", produces = "application/json")
+    public String upload(@RequestBody Generation generation) {
+        generationService.saveUpload(generation);
 
-        if (file.isEmpty()) {
-            log.info("Uploaded file is empty");
-            return """
-                    {
-                        "upload": "empty"
-                    }
-                    """;
-        } else {
-            log.info("Uploaded a valid file");
+        return """
+                {
+                    "upload": "success"
+                }
+                """;
+    }
 
-            Generation generation = mapper.readValue(file.getInputStream(), Generation.class);
-            log.info(generation.toString());
-            return """
-                    {
-                        "upload": "success"
-                    }
-                    """;
-        }
+    @GetMapping(value = CURRENT_GENERATION_PATH, produces = "application/json")
+    public Generation getCurrentGeneration() {
+        return generationService.getCurrentGeneration();
+    }
+
+    @GetMapping(value = NEXT_GENERATION_PATH, produces = "application/json")
+    public Generation getNextGeneration() {
+        return generationService.getNextGeneration();
     }
 }

@@ -3,25 +3,160 @@
 <head>
     <title>Game-of-Life</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-</head>
-<body>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
 
-<section class="my-5">
-    <div class="container">
+        #wrapper {
+            min-height: 100%;
+        }
+
+        #container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            min-height: 30%;
+        }
+
+        #table_div {
+            min-height: 70%;
+        }
+
+        table {
+            empty-cells: show;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        td {
+            border: 1px solid black;
+        }
+
+        .black {
+            background: black;
+        }
+    </style>
+</head>
+<body onload="getCurrentGeneration()">
+
+<script th:inline="javascript">
+
+    const currentGenUrl = [[${current_gen_endpoint}]]
+    const nextGenUrl = [[${next_gen_endpoint}]];
+    const uploadUrl = [[${upload_endpoint}]];
+
+    function disableButton(disabled, buttonID) {
+        const button = document.getElementById(buttonID);
+        if (button == null) return;
+        button.disabled = disabled;
+    }
+
+    function upload() {
+        disableButton(true, "upload_button")
+        const file = document.getElementById("file").files[0];
+
+        const fr = new FileReader();
+        fr.onload = function () {
+            const response = sendHttpRequest("POST", uploadUrl, false, fr.result.toString());
+            if (response.upload != null && response.upload === "success") {
+                visualize(JSON.parse(fr.result.toString()));
+            } else {
+                alert("Uploaded file is invalid!")
+            }
+        }
+
+        fr.readAsText(file);
+    }
+
+    function getCurrentGeneration() {
+        visualize(sendHttpRequest("GET", currentGenUrl, false, null));
+    }
+
+    function getNextGeneration() {
+        visualize(sendHttpRequest("GET", nextGenUrl, false, null));
+    }
+
+    function sendHttpRequest(method, url, async_, message) {
+        const httpRequest = new XMLHttpRequest();
+        httpRequest.open(method, url, async_);
+        httpRequest.setRequestHeader("Content-Type", "application/json");
+        httpRequest.send(message);
+
+        return JSON.parse(httpRequest.responseText);
+    }
+
+    function visualize(data) {
+        const maxTableWidth = window.innerWidth - 20;
+        const maxTableHeight = window.innerHeight - document.getElementById("container").clientHeight - 60;
+
+        const maxCellSizeForWidth = maxTableWidth / data.dimension.width;
+        const maxCellSizeForHeight = maxTableHeight / data.dimension.height;
+
+        const maxCellSize = maxCellSizeForWidth < maxCellSizeForHeight ? maxCellSizeForWidth : maxCellSizeForHeight;
+
+        const table = document.getElementById("table")
+        table.setAttribute("width", maxCellSize * data.dimension.width + "px");
+        table.setAttribute("height", maxCellSize * data.dimension.height + "px");
+
+        deleteAllChildren(table);
+
+        for (let y = 0; y < data.dimension.height; y++) {
+
+            let row = document.createElement("tr");
+            table.appendChild(row);
+
+            for (let x = 0; x < data.dimension.width; x++) {
+                let cell = document.createElement("td");
+
+                if (data.cells[y][x] === 1) {
+                    cell.setAttribute("class", "black");
+                }
+
+                row.appendChild(cell);
+            }
+        }
+    }
+
+    function deleteAllChildren(parent) {
+        while (parent.firstChild) {
+            parent.firstChild.remove()
+        }
+    }
+
+</script>
+
+<div id="wrapper">
+    <div class="container" id="container">
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-6 mx-auto">
                 <h2>Upload a generation</h2>
-                <p th:text="${message}" th:if="${message ne null}" class="alert alert-primary"></p>
-                <form method="post" th:action="@{${uploadEndpoint}}" enctype="multipart/form-data">
+                <p class="alert alert-primary">"Upload a file."</p>
+                <form>
                     <div class="form-group">
-                        <input type="file" th:name="${file}" accept="application/json" class="form-control-file">
+                        <input onchange="disableButton(false, 'upload_button')" type="file" id="file"
+                               name="file"
+                               accept="application/json" class="form-control-file">
                     </div>
-                    <button type="submit" class="btn btn-primary">Upload File</button>
+                    <button type="submit" id="upload_button" class="btn btn-primary"
+                            disabled="disabled"
+                            onclick="upload()">"Upload File"
+                    </button>
                 </form>
+            </div>
+            <div class="col-md-6 mx-auto">
+                <h2>Calculate the next generation</h2>
+                <button id="next_gen_button" class="btn btn-primary" onclick="getNextGeneration()">"Next Generation"
+                </button>
             </div>
         </div>
     </div>
-</section>
+
+    <div id="table_div">
+        <table id="table" onload="getCurrentGeneration()">
+        </table>
+    </div>
+</div>
 
 </body>
 </html>
