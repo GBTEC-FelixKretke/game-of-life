@@ -28,6 +28,7 @@ class GenerationServiceTest {
     void next_generation() {
         generationService.saveUpload(new Generation(new Dimension(3, 3),
             Arrays.asList(Arrays.asList(0, 1, 0), Arrays.asList(0, 1, 0), Arrays.asList(0, 1, 0))));
+        generationService.getNextGeneration();
 
         Generation expected = new Generation(new Dimension(3, 3),
             Arrays.asList(Arrays.asList(0, 0, 0), Arrays.asList(1, 1, 1), Arrays.asList(0, 0, 0)));
