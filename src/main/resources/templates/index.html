@@ -92,7 +92,7 @@
             for (let x = 0; x < data.dimension.width; x++) {
                 let cell = document.createElement("td");
 
-                if (data.cells[y].charAt(x) === 1) {
+                if (data.cells[y][x] === 1) {
                     cell.setAttribute("class", "black");
                 }
 
