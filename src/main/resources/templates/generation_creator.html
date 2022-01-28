@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Generation Creator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #wrapper {
+            min-height: 100%;
+        }
+
+        #container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        table {
+            empty-cells: show;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        td {
+            border: 1px solid black;
+        }
+
+        .black {
+            background: black;
+        }
+    </style>
+</head>
+<body onload="startUp()">
+
+<script th:inline="javascript">
+
+    function startUp() {
+        const exportButton = document.getElementById("export_button");
+        exportButton.onclick = function () {
+            const content = JSON.stringify(tableToJson())
+            console.warn(content)
+            save_content_to_file(content, "C:/Users/felix.kretke/Desktop/out")
+        }
+
+        const widthInput = document.getElementById("width");
+        widthInput.onchange = function () {
+            setNewTableSize();
+        }
+
+        const heightInput = document.getElementById("height");
+        heightInput.onchange = function () {
+            setNewTableSize();
+        }
+    }
+
+    function tableToJson() {
+        let result = {
+            "dimension": {
+                "width": 0,
+                "height": 0
+            },
+            "cells": []
+        }
+
+        const table = document.getElementById("table");
+        const height = table.childElementCount;
+        let width = 0;
+        if (height !== 0)
+            width = table.firstChild.childElementCount;
+
+        const cells = [];
+
+        table.childNodes.forEach(row => {
+            const cellRow = [];
+            row.childNodes.forEach(cell => {
+                if (cell.getAttribute("class") === "black") {
+                    cellRow.push(1)
+                } else {
+                    cellRow.push(0);
+                }
+            })
+
+            if (cellRow.length !== 0)
+                cells.push(cellRow)
+        })
+
+        result.dimension.width = width;
+        result.dimension.height = height;
+        result.cells = cells;
+
+        return result;
+    }
+
+    function save_content_to_file(content, filename) {
+        let dlg = false;
+        with (document) {
+            ir = createElement('iframe');
+            ir.id = 'ifr';
+            ir.location = 'about.blank';
+            ir.style.display = 'none';
+            body.appendChild(ir);
+            with (getElementById('ifr').contentWindow.document) {
+                open("text/plain", "replace");
+                characterSet = "utf-8";
+                write(content);
+                close();
+                document.characterSet = "utf-8";
+                dlg = execCommand('SaveAs', false, filename + '.txt');
+            }
+            body.removeChild(ir);
+        }
+        return dlg;
+    }
+
+    function setNewTableSize() {
+        const width = document.getElementById("width").value;
+        const height = document.getElementById("height").value;
+
+        if (width <= 0 || height <= 0)
+            return;
+
+        const maxTableWidth = window.innerWidth - 20;
+        const maxTableHeight = window.innerHeight - document.getElementById("container").clientHeight - 60;
+
+        const maxCellSizeForWidth = maxTableWidth / width;
+        const maxCellSizeForHeight = maxTableHeight / height;
+
+        const maxCellSize = maxCellSizeForWidth < maxCellSizeForHeight ? maxCellSizeForWidth : maxCellSizeForHeight;
+
+        const table = document.getElementById("table")
+        table.setAttribute("width", maxCellSize * width + "px");
+        table.setAttribute("height", maxCellSize * height + "px");
+
+        addRows(table, width, height);
+    }
+
+    function addRows(table, width, height) {
+        if (height > table.childElementCount) {
+            while (height > table.childElementCount) {
+                table.appendChild(document.createElement("tr"))
+            }
+        } else if (height < table.childElementCount) {
+            while (height < table.childElementCount) {
+                table.removeChild(table.lastChild)
+            }
+        }
+
+        table.childNodes.forEach(row => {
+            addCells(row, width)
+        })
+    }
+
+    function addCells(row, width) {
+        if (width > row.childElementCount) {
+            while (width > row.childElementCount) {
+                const cell = document.createElement("td");
+                cell.addEventListener("click", cellOnClick)
+                row.appendChild(cell)
+            }
+        } else if (width < row.childElementCount) {
+            while (width < row.childElementCount) {
+                row.removeChild(row.lastChild)
+            }
+        }
+    }
+
+    function cellOnClick(event) {
+        if (event.target.getAttribute("class") === "black") {
+            event.target.removeAttribute("class")
+        } else {
+            event.target.setAttribute("class", "black");
+        }
+    }
+</script>
+
+<div id="wrapper">
+    <div class="container" id="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h2>Generation Creator</h2>
+                <a th:href="@{${index}}">
+                    <button class="btn btn-primary"><- Back</button>
+                </a>
+                <button class="btn btn-primary" id="export_button">Export</button>
+                <form>
+                    <div class="form-group">
+                        <label for="width">Width: </label><input type="number" id="width" value="0">
+                        <label for="height">Height: </label><input type="number" id="height" value="0">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="table_div">
+        <table id="table">
+        </table>
+    </div>
+</div>
+</body>
+</html>

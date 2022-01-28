@@ -16,11 +16,6 @@
         #container {
             margin-top: 30px;
             margin-bottom: 30px;
-            min-height: 30%;
-        }
-
-        #table_div {
-            min-height: 70%;
         }
 
         table {
@@ -36,9 +31,48 @@
         .black {
             background: black;
         }
+
+        .slidecontainer {
+            width: 100%; /* Width of the outside container */
+        }
+
+        /* The slider itself */
+        .slider {
+            -webkit-appearance: none; /* Override default CSS styles */
+            appearance: none;
+            width: 100%; /* Full-width */
+            height: 25px; /* Specified height */
+            background: #d3d3d3; /* Grey background */
+            outline: none; /* Remove outline */
+            opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+            -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+            transition: opacity .2s;
+        }
+
+        /* Mouse-over effects */
+        .slider:hover {
+            opacity: 1; /* Fully shown on mouse-over */
+        }
+
+        /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; /* Override default look */
+            appearance: none;
+            width: 25px; /* Set a specific slider handle width */
+            height: 25px; /* Slider handle height */
+            background: #04AA6D; /* Green background */
+            cursor: pointer; /* Cursor on hover */
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px; /* Set a specific slider handle width */
+            height: 25px; /* Slider handle height */
+            background: #04AA6D; /* Green background */
+            cursor: pointer; /* Cursor on hover */
+        }
     </style>
 </head>
-<body onload="getCurrentGeneration()">
+<body onload="startUp()">
 
 <script th:inline="javascript">
 
@@ -69,20 +103,44 @@
         fr.readAsText(file);
     }
 
-    function getCurrentGeneration() {
-        visualize(sendHttpRequest("GET", currentGenUrl, false, null));
-    }
-
     function getNextGeneration() {
         visualize(sendHttpRequest("GET", nextGenUrl, false, null));
     }
 
     let autoGetNextGen = false;
+    let interval;
 
-    window.setInterval(function () {
-        if (autoGetNextGen)
-            getNextGeneration();
-    }, 1000)
+    function startUp() {
+        const autoNextGenFunction = function () {
+            if (autoGetNextGen)
+                getNextGeneration()
+        }
+
+        interval = window.setInterval(autoNextGenFunction, 1000);
+
+        const slider = document.getElementById("speedSlider");
+        slider.onchange = function () {
+            window.clearInterval(interval)
+            interval = window.setInterval(autoNextGenFunction, 1000 - slider.value)
+        }
+
+        const fileUpload = document.getElementById("file");
+        fileUpload.onchange = function () {
+            disableButton(false, "upload_button")
+        };
+
+        const uploadButton = document.getElementById("upload_button");
+        uploadButton.onclick = function () {
+            upload()
+        };
+
+        const autoNextGenButton = document.getElementById("auto_next_gen_button");
+        autoNextGenButton.onclick = function () {
+            getAutomaticallyNextGen()
+        };
+
+        visualize(sendHttpRequest("GET", currentGenUrl, false, null));
+    }
 
     function getAutomaticallyNextGen() {
         const autoNextGenButton = document.getElementById("auto_next_gen_button");
@@ -151,34 +209,37 @@
                 <p class="alert alert-primary">Upload a file.</p>
                 <form>
                     <div class="form-group">
-                        <input onchange="disableButton(false, 'upload_button')" type="file" id="file"
-                               name="file"
-                               accept="application/json" class="form-control-file">
+                        <input type="file" id="file" name="file" accept="application/json" class="form-control-file">
                     </div>
-                    <button type="submit" id="upload_button" class="btn btn-primary"
-                            disabled="disabled"
-                            onclick="upload()">Upload File
+                    <button type="submit" id="upload_button" class="btn btn-primary" disabled="disabled">Upload File
                     </button>
                 </form>
+                <br>
+                <a th:href="@{${generation_creator}}">
+                    <button class="btn btn-primary">Generation Creator</button>
+                </a>
             </div>
             <div class="col-md-6 mx-auto">
                 <h2>Calculate the next generation</h2>
                 <button id="next_gen_button" class="btn btn-primary" onclick="getNextGeneration()">Next Generation
                 </button>
-                <br>
-                <br>
-                <button id="auto_next_gen_button" class="btn btn-primary" onclick="getAutomaticallyNextGen()">
+                <button id="auto_next_gen_button" class="btn btn-primary"
+                        onclick="getAutomaticallyNextGen()">
                     Start
                 </button>
+                <div class="slidecontainer">
+                    <label for="speedSlider">Auto Next Generation Speed</label><input type="range" min="0" max="999"
+                                                                                      value="0" class="slider"
+                                                                                      id="speedSlider">
+                </div>
             </div>
         </div>
     </div>
 
     <div id="table_div">
-        <table id="table" onload="getCurrentGeneration()">
+        <table id="table">
         </table>
     </div>
 </div>
-
 </body>
 </html>
