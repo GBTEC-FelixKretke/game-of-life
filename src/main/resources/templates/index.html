@@ -88,23 +88,38 @@
 
     function upload() {
         disableButton(true, "upload_button")
-        const file = document.getElementById("file").files[0];
+        const fileUpload = document.getElementById("file")
+        const file = fileUpload.files[0];
+
 
         const fr = new FileReader();
         fr.onload = function () {
-            const response = sendHttpRequest("POST", uploadUrl, false, fr.result.toString());
-            if (response.upload != null && response.upload === "success") {
-                visualize(JSON.parse(fr.result.toString()));
-            } else {
-                alert("Uploaded file is invalid!")
-            }
+            sendHttpRequest("POST", uploadUrl, fr.result.toString())
+                .then(function (response) {
+                    response = JSON.parse(response.toString());
+                    if (response.upload != null && response.upload === "success") {
+                        visualize(JSON.parse(fr.result.toString()));
+                    } else {
+                        console.error("Uploaded file is invalid!")
+                    }
+                })
+                .catch(function (err) {
+                    console.error("Failed to load current generation!", err.statusText)
+                })
         }
 
         fr.readAsText(file);
+        fileUpload.value = null
     }
 
     function getNextGeneration() {
-        visualize(sendHttpRequest("GET", nextGenUrl, false, null));
+        sendHttpRequest("GET", nextGenUrl, null)
+            .then(function (result) {
+                visualize(JSON.parse(result.toString()))
+            })
+            .catch(function (err) {
+                console.error("Failed to load next generation!", err.statusText)
+            })
     }
 
     let autoGetNextGen = false;
@@ -126,7 +141,8 @@
 
         const fileUpload = document.getElementById("file");
         fileUpload.onchange = function () {
-            disableButton(false, "upload_button")
+            if (fileUpload.files.length !== 0)
+                disableButton(false, "upload_button")
         };
 
         const uploadButton = document.getElementById("upload_button");
@@ -139,7 +155,13 @@
             getAutomaticallyNextGen()
         };
 
-        visualize(sendHttpRequest("GET", currentGenUrl, false, null));
+        sendHttpRequest("GET", currentGenUrl, null)
+            .then(function (result) {
+                visualize(JSON.parse(result.toString()))
+            })
+            .catch(function (err) {
+                console.error("Failed to load current generation!", err.statusText)
+            })
     }
 
     function getAutomaticallyNextGen() {
@@ -152,13 +174,29 @@
         }
     }
 
-    function sendHttpRequest(method, url, async_, message) {
-        const httpRequest = new XMLHttpRequest();
-        httpRequest.open(method, url, async_);
-        httpRequest.setRequestHeader("Content-Type", "application/json");
-        httpRequest.send(message);
-
-        return JSON.parse(httpRequest.responseText);
+    function sendHttpRequest(method, url, message) {
+        return new Promise(function (resolve, reject) {
+            let xhr = new XMLHttpRequest();
+            xhr.open(method, url);
+            xhr.setRequestHeader("Content-Type", "application/json")
+            xhr.onload = function () {
+                if (this.status >= 200 && this.status < 300) {
+                    resolve(xhr.responseText);
+                } else {
+                    reject({
+                        status: this.status,
+                        statusText: xhr.statusText
+                    });
+                }
+            }
+            xhr.onerror = function () {
+                reject({
+                    status: this.status,
+                    statusText: xhr.statusText
+                });
+            }
+            xhr.send(message);
+        })
     }
 
     function visualize(data) {
