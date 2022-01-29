@@ -17,6 +17,7 @@ import me.skulduggerry.gameoflife.model.GenerationContainer;
 public class GenerationService {
 
     public void saveUpload(Generation generation) {
+        generation.isWellFormattedOrThrow();
         GenerationContainer.setCurrentGeneration(generation);
     }
 

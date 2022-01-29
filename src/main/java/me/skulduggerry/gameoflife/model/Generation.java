@@ -1,14 +1,13 @@
 package me.skulduggerry.gameoflife.model;
 
-import java.util.List;
-
+import me.skulduggerry.gameoflife.exception.InvalidDataException;
 import org.springframework.lang.NonNull;
 
-import me.skulduggerry.gameoflife.exception.InvalidDataException;
+import java.util.List;
 
 public record Generation(@NonNull Dimension dimension, @NonNull List<List<Integer>> cells) {
 
-    public Generation {
+    public void isWellFormattedOrThrow() {
         if (dimension.height() != cells.size()) {
             throw new InvalidDataException("fieldData has not the same size as dimension height");
         }
