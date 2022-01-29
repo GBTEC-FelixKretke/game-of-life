@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Generation Creator</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         html, body {
             height: 100%;
@@ -42,8 +43,7 @@
         const exportButton = document.getElementById("export_button");
         exportButton.onclick = function () {
             const content = JSON.stringify(tableToJson())
-            console.warn(content)
-            save_content_to_file(content, "C:/Users/felix.kretke/Desktop/out")
+            download(new Date().toLocaleString() + "_generation.json", content)
         }
 
         const widthInput = document.getElementById("width");
@@ -55,6 +55,19 @@
         heightInput.onchange = function () {
             setNewTableSize();
         }
+    }
+
+    function download(filename, text) {
+        let element = document.createElement('a');
+        element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
     }
 
     function tableToJson() {
@@ -70,7 +83,7 @@
         const height = table.childElementCount;
         let width = 0;
         if (height !== 0)
-            width = table.firstChild.childElementCount;
+            width = table.firstElementChild.childElementCount;
 
         const cells = [];
 
@@ -93,27 +106,6 @@
         result.cells = cells;
 
         return result;
-    }
-
-    function save_content_to_file(content, filename) {
-        let dlg = false;
-        with (document) {
-            ir = createElement('iframe');
-            ir.id = 'ifr';
-            ir.location = 'about.blank';
-            ir.style.display = 'none';
-            body.appendChild(ir);
-            with (getElementById('ifr').contentWindow.document) {
-                open("text/plain", "replace");
-                characterSet = "utf-8";
-                write(content);
-                close();
-                document.characterSet = "utf-8";
-                dlg = execCommand('SaveAs', false, filename + '.txt');
-            }
-            body.removeChild(ir);
-        }
-        return dlg;
     }
 
     function setNewTableSize() {
@@ -150,22 +142,18 @@
         }
 
         table.childNodes.forEach(row => {
-            addCells(row, width)
+            if (width > row.childElementCount) {
+                while (width > row.childElementCount) {
+                    const cell = document.createElement("td");
+                    cell.addEventListener("click", cellOnClick);
+                    row.appendChild(cell);
+                }
+            } else if (width < row.childElementCount) {
+                while (width < row.childElementCount) {
+                    row.removeChild(row.lastChild);
+                }
+            }
         })
-    }
-
-    function addCells(row, width) {
-        if (width > row.childElementCount) {
-            while (width > row.childElementCount) {
-                const cell = document.createElement("td");
-                cell.addEventListener("click", cellOnClick)
-                row.appendChild(cell)
-            }
-        } else if (width < row.childElementCount) {
-            while (width < row.childElementCount) {
-                row.removeChild(row.lastChild)
-            }
-        }
     }
 
     function cellOnClick(event) {
@@ -182,16 +170,18 @@
         <div class="row">
             <div class="col-md-8 mx-auto">
                 <h2>Generation Creator</h2>
+                <div class="form-group" style="margin-top: 1rem">
+                    <form>
+                        <div class="form-group">
+                            <label for="width">Width: </label><input type="number" id="width" value="0">
+                            <label for="height">Height: </label><input type="number" id="height" value="0">
+                        </div>
+                    </form>
+                </div>
                 <a th:href="@{${index}}">
                     <button class="btn btn-primary"><- Back</button>
                 </a>
                 <button class="btn btn-primary" id="export_button">Export</button>
-                <form>
-                    <div class="form-group">
-                        <label for="width">Width: </label><input type="number" id="width" value="0">
-                        <label for="height">Height: </label><input type="number" id="height" value="0">
-                    </div>
-                </form>
             </div>
         </div>
     </div>
