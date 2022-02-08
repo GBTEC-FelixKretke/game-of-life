@@ -127,10 +127,10 @@
         table.setAttribute("width", maxCellSize * width + "px");
         table.setAttribute("height", maxCellSize * height + "px");
 
-        addRows(table, width, height);
+        addRowsAndColumns(table, width, height);
     }
 
-    function addRows(table, width, height) {
+    function addRowsAndColumns(table, width, height) {
         if (height > table.childElementCount) {
             while (height > table.childElementCount) {
                 table.appendChild(document.createElement("tr"))
