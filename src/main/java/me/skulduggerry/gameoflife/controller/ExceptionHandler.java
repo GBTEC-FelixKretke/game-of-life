@@ -5,9 +5,6 @@ import static java.lang.String.format;
 import static me.skulduggerry.gameoflife.utils.ExceptionHandlerUtils.toResponseEntity;
 import static me.skulduggerry.gameoflife.utils.WebRequestUtils.extractPath;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-
-import java.io.IOException;
 
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 
@@ -30,12 +27,6 @@ public class ExceptionHandler {
         log.warn(format("Caught exception while handling request %s therefore status code '%s' [%d] will be returned!", request,
             httpStatus.getReasonPhrase(), httpStatus.value()), cause);
         return toResponseEntity(httpStatus, webRequest);
-    }
-
-    @ResponseStatus(code = INTERNAL_SERVER_ERROR)
-    @org.springframework.web.bind.annotation.ExceptionHandler({ IOException.class })
-    public ResponseEntity<?> internalServerError(Exception cause, WebRequest request) {
-        return handleException(INTERNAL_SERVER_ERROR, cause, request);
     }
 
     @ResponseStatus(code = BAD_REQUEST)
