@@ -16,6 +16,12 @@ public record Generation(@NonNull Dimension dimension, @NonNull List<List<Intege
             if (row == null || row.size() != dimension.width()) {
                 throw new InvalidDataException("row is null or has not the right length");
             }
+
+            row.forEach(integer -> {
+                if (integer == null){
+                    throw new InvalidDataException("integer is null");
+                }
+            });
         });
     }
 }
