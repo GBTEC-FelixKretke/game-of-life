@@ -64,28 +64,28 @@ public class GenerationService {
 
         int livingCellsAround = 0;
 
-        if (!isTopEdge && !isLeftEdge && cells.get(y - 1).get(x - 1) == 1) {
+        if (!isTopEdge && !isLeftEdge && cells.get(y - 1).get(x - 1) != 0) {
             livingCellsAround++;
         }
-        if (!isTopEdge && cells.get(y - 1).get(x) == 1) {
+        if (!isTopEdge && cells.get(y - 1).get(x) != 0) {
             livingCellsAround++;
         }
-        if (!isTopEdge && !isRightEdge && cells.get(y - 1).get(x + 1) == 1) {
+        if (!isTopEdge && !isRightEdge && cells.get(y - 1).get(x + 1) != 0) {
             livingCellsAround++;
         }
-        if (!isLeftEdge && cells.get(y).get(x - 1) == 1) {
+        if (!isLeftEdge && cells.get(y).get(x - 1) != 0) {
             livingCellsAround++;
         }
-        if (!isRightEdge && cells.get(y).get(x + 1) == 1) {
+        if (!isRightEdge && cells.get(y).get(x + 1) != 0) {
             livingCellsAround++;
         }
-        if (!isBottomEdge && !isLeftEdge && cells.get(y + 1).get(x - 1) == 1) {
+        if (!isBottomEdge && !isLeftEdge && cells.get(y + 1).get(x - 1) != 0) {
             livingCellsAround++;
         }
-        if (!isBottomEdge && cells.get(y + 1).get(x) == 1) {
+        if (!isBottomEdge && cells.get(y + 1).get(x) != 0) {
             livingCellsAround++;
         }
-        if (!isBottomEdge && !isRightEdge && cells.get(y + 1).get(x + 1) == 1) {
+        if (!isBottomEdge && !isRightEdge && cells.get(y + 1).get(x + 1) != 0) {
             livingCellsAround++;
         }
 
