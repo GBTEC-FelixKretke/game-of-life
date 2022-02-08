@@ -21,7 +21,7 @@ class GenerationTest {
                 // @formatter:on
         );
 
-        assertThrows(InvalidDataException.class, () -> new Generation(dimension, fieldData));
+        assertThrows(InvalidDataException.class, () -> new Generation(dimension, fieldData).isWellFormattedOrThrow());
     }
 
     @Test
@@ -35,20 +35,20 @@ class GenerationTest {
                 // @formatter:on
         );
 
-        assertThrows(InvalidDataException.class, () -> new Generation(dimension, fieldData));
+        assertThrows(InvalidDataException.class, () -> new Generation(dimension, fieldData).isWellFormattedOrThrow());
     }
 
     @Test
     void null_line() {
         Dimension dimension = new Dimension(3, 3);
         List<List<Integer>> fieldData = Arrays.asList(
-        // @formatter:off
+                // @formatter:off
                 Arrays.asList(0, 1, 0),
                 Arrays.asList(0, 1, 0),
                 null
                 // @formatter:on
         );
 
-        assertThrows(InvalidDataException.class, () -> new Generation(dimension, fieldData));
+        assertThrows(InvalidDataException.class, () -> new Generation(dimension, fieldData).isWellFormattedOrThrow());
     }
 }
